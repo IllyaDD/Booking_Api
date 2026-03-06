@@ -1,0 +1,27 @@
+[project]
+name = "portfolio-booking-prod"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "alembic>=1.18.3",
+    "asyncpg>=0.31.0",
+    "black>=26.1.0",
+    "celery>=5.6.2",
+    "fastapi-filters>=0.3.1",
+    "fastapi-pagination>=0.15.9",
+    "fastapi-users>=15.0.4",
+    "fastapi-users-db-sqlalchemy>=7.0.0",
+    "fastapi-users-db-sqlmodel>=0.3.0",
+    "fastapi-utils>=0.8.0",
+    "fastapi[standard]>=0.128.3",
+    "psycopg2>=2.9.11",
+    "psycopg2-binary>=2.9.11",
+    "pydantic-settings-yaml>=0.2.0",
+    "pytest>=9.0.2",
+    "python-decouple>=3.8",
+    "redis>=7.1.0",
+    "sqlalchemy-utils>=0.42.1",
+    "sqlmodel>=0.0.32",
+]
