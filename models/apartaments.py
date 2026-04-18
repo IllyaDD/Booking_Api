@@ -34,14 +34,10 @@ class Apartment(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(sa_column=Column(VARCHAR(255), nullable=False))
     address: str = Field(sa_column=Column(VARCHAR(255), nullable=False))
-    type: ApartmentType = Field(
-        sa_column=Column(SAEnum(ApartmentType), nullable=False)
-    )
+    type: ApartmentType = Field(sa_column=Column(SAEnum(ApartmentType), nullable=False))
     rooms: int = Field(sa_column=Column(Integer, nullable=False, default=1))
     max_guests: int = Field(sa_column=Column(Integer, nullable=False, default=1))
-    description: Optional[str] = Field(
-        sa_column=Column(VARCHAR(1000), nullable=True)
-    )
+    description: Optional[str] = Field(sa_column=Column(VARCHAR(1000), nullable=True))
     owner_id: int = Field(nullable=False, foreign_key="users.id")
     created_at: datetime = Field(
         sa_column=Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
@@ -54,3 +50,9 @@ class Apartment(SQLModel, table=True):
         back_populates="apartments", link_model=ApartmentAmenityLink
     )
     ratings: List["Rating"] = Relationship(back_populates="apartment")
+
+    @property
+    def ratings_avg(self) -> float:
+        if not self.ratings:
+            return 0.0
+        return sum(r.score for r in self.ratings) / len(self.ratings)

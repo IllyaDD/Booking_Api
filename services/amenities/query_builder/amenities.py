@@ -1,8 +1,6 @@
 from typing import Optional, List
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import select
-from fastapi_filters import FilterValues
-from fastapi_filters.ext.sqlalchemy import apply_filters
 from fastapi_pagination import Page
 from fastapi_pagination.ext.sqlalchemy import paginate
 from models import Amenity
@@ -62,8 +60,9 @@ class AmenitiesQueryBuider:
 
     @staticmethod
     async def get_amenities(
-        session: AsyncSessionDep, filters: FilterValues
+        session: AsyncSessionDep, name: Optional[str] = None
     ) -> Page[Amenity]:
         query = select(Amenity)
-        query = apply_filters(query, filters)
+        if name is not None:
+            query = query.where(Amenity.name.ilike(f"%{name}%"))
         return await paginate(session, query)

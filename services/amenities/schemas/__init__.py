@@ -3,5 +3,4 @@ from .amenities import (
     AmenitiesResponseSchema,
     AmenitiesUpdateSchemas,
     AmenitiesListResponseSchema,
-    AmenityFilters,
 )

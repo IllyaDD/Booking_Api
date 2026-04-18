@@ -1,13 +1,12 @@
 from dependency.session import AsyncSessionDep
 from models import User
-from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi_filters import FilterValues
+from fastapi import APIRouter, HTTPException, Depends, status, Query
 from fastapi_pagination import Page
+from typing import Optional
 from services.amenities.schemas.amenities import (
     AmenitiesCreateSchema,
     AmenitiesResponseSchema,
     AmenitiesUpdateSchemas,
-    AmenityFilters,
 )
 from services.amenities.query_builder import AmenitiesQueryBuider
 from services.amenities.errors import AmenityNotFound, AmenityAlreadyExists
@@ -22,7 +21,9 @@ amenities_router = APIRouter()
     response_model=AmenitiesResponseSchema,
 )
 async def create_amenities(
-    amenities_data: AmenitiesCreateSchema, session: AsyncSessionDep
+    amenities_data: AmenitiesCreateSchema,
+    session: AsyncSessionDep,
+    user: User = Depends(current_superuser),
 ):
     try:
         new_amenity = await AmenitiesQueryBuider.create_amenities(
@@ -34,7 +35,9 @@ async def create_amenities(
 
 
 @amenities_router.get("/amenities/{amenity_id}", response_model=AmenitiesResponseSchema)
-async def get_amenitites_by_id(amenity_id: int, session: AsyncSessionDep):
+async def get_amenitites_by_id(
+    amenity_id: int, session: AsyncSessionDep, user: User = Depends(current_superuser)
+):
     try:
         return await AmenitiesQueryBuider.get_amenities_by_id(session, amenity_id)
     except AmenityNotFound as e:
@@ -55,7 +58,10 @@ async def delete_amenity(
 
 @amenities_router.patch("/amenities/{amenity_id}")
 async def update_amenity(
-    session: AsyncSessionDep, amenity_id: int, data: AmenitiesUpdateSchemas
+    session: AsyncSessionDep,
+    amenity_id: int,
+    data: AmenitiesUpdateSchemas,
+    user: User = Depends(current_superuser),
 ):
     try:
         return await AmenitiesQueryBuider.update_amenity(session, amenity_id, data)
@@ -66,6 +72,6 @@ async def update_amenity(
 @amenities_router.get("/amenities/", response_model=Page[AmenitiesResponseSchema])
 async def get_amenities(
     session: AsyncSessionDep,
-    filters: FilterValues = Depends(AmenityFilters),
+    name: Optional[str] = Query(None),
 ):
-    return await AmenitiesQueryBuider.get_amenities(session, filters)
+    return await AmenitiesQueryBuider.get_amenities(session, name=name)

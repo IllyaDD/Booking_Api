@@ -1,5 +1,4 @@
 from pathlib import Path
-
 from pydantic import BaseModel, SecretStr, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine import URL
@@ -30,6 +29,19 @@ class DatabaseSettings(BaseModel):
         )
 
 
+class RedisSettings(BaseModel):
+    host: str = "localhost"
+    port: int = 6379
+    db: int = 0
+    password: SecretStr | None = Field(default=None, exclude=True, repr=False)
+
+    def get_url(self) -> str:
+        if self.password:
+            pwd = self.password.get_secret_value()
+            return f"redis://:{pwd}@{self.host}:{self.port}/{self.db}"
+        return f"redis://{self.host}:{self.port}/{self.db}"
+
+
 class DefaultSettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=Path(__file__).resolve().parent.parent / ".env",
@@ -54,3 +66,4 @@ class AuthSettings(BaseModel):
 class Settings(DatabaseConnectionSettings):
     debug: bool
     auth: AuthSettings
+    redis: RedisSettings
