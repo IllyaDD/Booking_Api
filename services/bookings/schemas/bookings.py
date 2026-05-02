@@ -1,4 +1,4 @@
-from sqlmodel import SQLModel
+from sqlmodel import SQLModel, Field
 from datetime import datetime, date
 from typing import Optional, List
 
@@ -30,13 +30,13 @@ class BookingCreateSchema(SQLModel):
     apartment_id: int
     check_in: date
     check_out: date
-    guests_count: int
+    guests_count: int = Field(ge=1)
 
 
 class BookingUpdateSchema(SQLModel):
     check_in: Optional[date] = None
     check_out: Optional[date] = None
-    guests_count: Optional[int] = None
+    guests_count: Optional[int] = Field(default=None, ge=1)
     status: Optional[BookingStatus] = None
 
 

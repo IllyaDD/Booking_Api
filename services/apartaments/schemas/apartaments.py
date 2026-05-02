@@ -35,16 +35,16 @@ class ApartmentCreateSchema(SQLModel):
     name: str
     address: str
     type: ApartmentType
-    rooms: int
-    max_guests: int
+    rooms: int = Field(ge=1)
+    max_guests: int = Field(ge=1)
     description: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
 class ApartmentUpdateSchema(SQLModel):
-    name: Optional[str]
-    address: Optional[str]
-    type: Optional[ApartmentType]
-    rooms: Optional[int]
-    max_guests: Optional[int]
-    description: Optional[str]
+    name: Optional[str] = None
+    address: Optional[str] = None
+    type: Optional[ApartmentType] = None
+    rooms: Optional[int] = Field(default=None, ge=1)
+    max_guests: Optional[int] = Field(default=None, ge=1)
+    description: Optional[str] = None
